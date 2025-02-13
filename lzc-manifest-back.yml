@@ -1,0 +1,41 @@
+lzc-sdk-version: "0.1"
+name: CodeFever
+package: xyz.mxue.codefever
+version: 0.0.1
+description: Git 代码托管服务
+homepage: ""
+author: PGYER
+application:
+  subdomain: codefever
+  background_task: false
+  multi_instance: false
+  gpu_accel: false
+  kvm_accel: false
+  usb_accel: false
+  routes:
+    - /=http://codefever.xyz.mxue.codefever.lzcapp:80/
+  ingress:
+    - protocol: tcp
+      port: 22
+      service: codefever
+services:
+  codefever:
+    image: registry.lazycat.cloud/mxuexxmy/pgyer/codefever-community-lite:67d046b0d220cfac
+    environment:
+      - DB_HOST=codefever_db.xyz.mxue.codefever.lzcapp
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASS=123456
+      - DB_NAME=codefever_community
+    depends_on:
+      - codefever_db
+    binds:
+      - /lzcapp/var/git-storage:/data/www/codefever-community/git-storage
+      - /lzcapp/var/logs:/data/www/codefever-community/application/logs
+  codefever_db:
+    image: registry.lazycat.cloud/mxuexxmy/library/mysql:3830eda172a0285a
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --max_connections=3000
+    binds:
+      - /lzcapp/var/mysql:/var/lib/mysql
