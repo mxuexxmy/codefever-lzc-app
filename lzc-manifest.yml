@@ -18,6 +18,8 @@ application:
     - protocol: tcp
       port: 22
       service: codefever
+  depends_on:
+    - codefever
 services:
   codefever:
     image: registry.lazycat.cloud/mxuexxmy/pgyer/codefever-community-lite:67d046b0d220cfac
